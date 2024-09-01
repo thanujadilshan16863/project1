@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">632146603230</string>
+    <string name="google_api_key" translatable="false">AIzaSyAbjUoP_plTN6G6Y5IZQ8vr1pzCtRXyujI</string>
+    <string name="google_app_id" translatable="false">1:632146603230:android:006617dcda30980647664f</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAbjUoP_plTN6G6Y5IZQ8vr1pzCtRXyujI</string>
+    <string name="google_storage_bucket" translatable="false">maxburn-37f03.appspot.com</string>
+    <string name="project_id" translatable="false">maxburn-37f03</string>
+</resources>

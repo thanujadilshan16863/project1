@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "632146603230",
+    "project_id": "maxburn-37f03",
+    "storage_bucket": "maxburn-37f03.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632146603230:android:006617dcda30980647664f",
+        "android_client_info": {
+          "package_name": "com.example.project1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbjUoP_plTN6G6Y5IZQ8vr1pzCtRXyujI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
