@@ -15,10 +15,10 @@ dependencies:
   cupertino_icons: ^1.0.8
   
 
+  intl: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  intl: ^0.18.1  # Add this line (check for the latest version)
   flutter_lints: ^4.0.0
 
 dependency_overrides:

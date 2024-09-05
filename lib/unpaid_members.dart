@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UnpaidMembers extends StatelessWidget {
   const UnpaidMembers({super.key});
+
+  // Get the current month and year
+  int getCurrentMonth() {
+    return DateTime.now().month;
+  }
+
+  int getCurrentYear() {
+    return DateTime.now().year;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +22,7 @@ class UnpaidMembers extends StatelessWidget {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/home1.png'), // Path to your background image
+                image: AssetImage('assets/home1.jpg'), // Path to your background image
                 fit: BoxFit.cover, // Cover the entire screen
               ),
             ),
@@ -27,7 +37,7 @@ class UnpaidMembers extends StatelessWidget {
                 const Center(
                   child: CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage('assets/logo.png'), // Replace with your logo path
+                    backgroundImage: AssetImage('assets/logo.jpg'), // Replace with your logo path
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -41,17 +51,49 @@ class UnpaidMembers extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Members Form List
+                // Members List
                 Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.all(20),
-                    children: [
-                      MemberCard(),
-                      const SizedBox(height: 10),
-                      MemberCard(),
-                      const SizedBox(height: 10),
-                      MemberCard(),
-                    ],
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance.collection('members').snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return const Center(child: Text('No unpaid members found.'));
+                      }
+
+                      final currentMonth = getCurrentMonth();
+                      final currentYear = getCurrentYear();
+
+                      // Filter members whose timestamp is NOT in the current month or earlier
+                      final members = snapshot.data!.docs.where((doc) {
+                        var data = doc.data() as Map<String, dynamic>;
+                        Timestamp? timestamp = data['timestamp'] as Timestamp?;
+
+                        if (timestamp != null) {
+                          DateTime date = timestamp.toDate();
+                          return date.month < currentMonth || (date.month == currentMonth && date.year < currentYear);
+                        }
+                        return false;
+                      }).toList();
+
+                      if (members.isEmpty) {
+                        return const Center(child: Text('All members have paid this month.'));
+                      }
+
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(20),
+                        itemCount: members.length,
+                        itemBuilder: (context, index) {
+                          var memberData = members[index].data() as Map<String, dynamic>;
+                          return MemberCard(
+                            name: '${memberData['firstName']} ${memberData['lastName']}',
+                            nic: memberData['nic'],
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
               ],
@@ -64,50 +106,40 @@ class UnpaidMembers extends StatelessWidget {
 }
 
 class MemberCard extends StatelessWidget {
-  const MemberCard({super.key});
+  final String name;
+  final String nic;
+
+  const MemberCard({super.key, required this.name, required this.nic});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8), // Slight transparency
+        color: Colors.white.withOpacity(0.1), // Slight transparency
         borderRadius: BorderRadius.circular(10),
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Name field
           Text(
-            "Name :",
-            style: TextStyle(
+            "Name: $name",
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 5),
-          TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Enter member name',
-            ),
-          ),
-          SizedBox(height: 10),
+          const SizedBox(height: 5),
           // NIC field
           Text(
-            "NIC :",
-            style: TextStyle(
+            "NIC: $nic",
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 5),
-          TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Enter NIC number',
-            ),
-          ),
+          const SizedBox(height: 5),
         ],
       ),
     );
