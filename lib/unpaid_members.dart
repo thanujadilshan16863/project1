@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class UnpaidMembers extends StatelessWidget {
+  const UnpaidMembers({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -8,7 +10,7 @@ class UnpaidMembers extends StatelessWidget {
         children: [
           // Background Image
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/home1.png'), // Path to your background image
                 fit: BoxFit.cover, // Cover the entire screen
@@ -20,17 +22,17 @@ class UnpaidMembers extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 20), // Space at the top
+                const SizedBox(height: 20), // Space at the top
                 // Logo Section
-                Center(
+                const Center(
                   child: CircleAvatar(
                     radius: 50,
                     backgroundImage: AssetImage('assets/logo.png'), // Replace with your logo path
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 // "Un-Paid Members" text
-                Text(
+                const Text(
                   "Un-Paid Members",
                   style: TextStyle(
                     color: Colors.white,
@@ -38,16 +40,16 @@ class UnpaidMembers extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 // Members Form List
                 Expanded(
                   child: ListView(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     children: [
                       MemberCard(),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       MemberCard(),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       MemberCard(),
                     ],
                   ),
@@ -62,15 +64,17 @@ class UnpaidMembers extends StatelessWidget {
 }
 
 class MemberCard extends StatelessWidget {
+  const MemberCard({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.8), // Slight transparency
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Name field

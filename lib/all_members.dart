@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AllMembers extends StatelessWidget {
+  const AllMembers({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -8,7 +10,7 @@ class AllMembers extends StatelessWidget {
         children: [
           // Background Image
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/home1.jpg'), // Path to your background image
                 fit: BoxFit.cover, // Cover the entire screen
@@ -20,17 +22,17 @@ class AllMembers extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 20), // Space at the top
+                const SizedBox(height: 20), // Space at the top
                 // Logo Section
-                Center(
+                const Center(
                   child: CircleAvatar(
                     radius: 50,
                     backgroundImage: AssetImage('assets/logo.jpg'), // Replace with your logo path
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 // "All Members" text
-                Text(
+                const Text(
                   "All Members",
                   style: TextStyle(
                     color: Colors.white,
@@ -38,7 +40,7 @@ class AllMembers extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 // NIC Search Bar
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -55,39 +57,39 @@ class AllMembers extends StatelessWidget {
                               borderSide: BorderSide.none,
                             ),
                             hintText: 'Enter NIC',
-                            contentPadding: EdgeInsets.symmetric(
+                            contentPadding: const EdgeInsets.symmetric(
                                 vertical: 0, horizontal: 20),
                           ),
                         ),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       // Search Button
                       ElevatedButton(
                         onPressed: () {
                           // Search logic can go here
                         },
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 25, vertical: 15), backgroundColor: Colors.purple,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ), // Button background color
                         ),
-                        child: Text('Search'),
+                        child: const Text('Search'),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 // Members List
                 Expanded(
                   child: ListView(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     children: [
                       MemberDetailsCard(),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       MemberDetailsCard(),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                     ],
                   ),
                 ),
@@ -101,10 +103,12 @@ class AllMembers extends StatelessWidget {
 }
 
 class MemberDetailsCard extends StatelessWidget {
+  const MemberDetailsCard({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.9), // Slight transparency
         borderRadius: BorderRadius.circular(10),
@@ -131,7 +135,7 @@ class MemberDetailsCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Text(
         text,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
         ),

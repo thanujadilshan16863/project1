@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart'; // To format the month from timestamp
 
 class MonthlyPaymentScreen extends StatefulWidget {
-  MonthlyPaymentScreen({super.key});
+  const MonthlyPaymentScreen({super.key});
 
   @override
   _MonthlyPaymentScreenState createState() => _MonthlyPaymentScreenState();

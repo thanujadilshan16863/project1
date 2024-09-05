@@ -74,35 +74,35 @@ class MemberCard extends StatelessWidget {
         color: Colors.white.withOpacity(0.8), // Slight transparency
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Name field
-          const Text(
+          Text(
             "Name :",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 5),
-          const TextField(
+          SizedBox(height: 5),
+          TextField(
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintText: 'Enter member name',
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           // NIC field
-          const Text(
+          Text(
             "NIC :",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 5),
-          const TextField(
+          SizedBox(height: 5),
+          TextField(
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintText: 'Enter NIC number',
