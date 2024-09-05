@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'login.dart'; // Import the login screen
 import 'new_member.dart'; // Import the new member screen
 import 'monthly_payment.dart'; // Import the monthly payment screen
+import 'all_members.dart';
+import 'paid_members.dart';
+import 'unpaid_members.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -90,13 +93,40 @@ class HomeScreen extends StatelessWidget {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const MonthlyPaymentScreen()),
+                            MaterialPageRoute(builder: (context) => MonthlyPaymentScreen()),
                           );
                         },
                       ),
-                      const CustomButton(icon: Icons.group, text: 'All Members'),
-                      const CustomButton(icon: Icons.check_box, text: 'Paid Members'),
-                      const CustomButton(icon: Icons.check_box_outline_blank, text: 'Un-Paid Members'),
+                      CustomButton(
+                        icon: Icons.group,
+                        text: 'All Members',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AllMembers()),
+                          );
+                        },
+                        ),
+                       CustomButton(
+                          icon: Icons.check_box,
+                          text: 'Paid Members',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => PaidMembers()),
+                          );
+                        },
+                      ),
+                       CustomButton(
+                          icon: Icons.check_box_outline_blank,
+                          text: 'Un-Paid Members',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => UnpaidMembers()),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
