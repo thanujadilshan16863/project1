@@ -309,7 +309,7 @@ class _MonthlyPaymentScreenState extends State<MonthlyPaymentScreen> {
         // Send payment reminder using TextIt.biz API
         final response = await http.get(
           Uri.parse(
-              'https://www.textit.biz/sendmsg?id=94767888824&pw=1245&to=$contactNumber&text=$messageText'
+              'https://www.textit.biz/sendmsg?id=944&pw=1245&to=$contactNumber&text=$messageText'
           ),
         );
 
