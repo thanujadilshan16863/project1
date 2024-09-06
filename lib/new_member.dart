@@ -240,7 +240,7 @@ class NewMemberScreen extends StatelessWidget {
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white12,
+        fillColor: Colors.black.withOpacity(0.6),
         labelText: label,
         labelStyle: const TextStyle(color: Colors.white),
         border: OutlineInputBorder(

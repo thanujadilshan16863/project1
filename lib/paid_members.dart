@@ -14,6 +14,26 @@ class PaidMembers extends StatelessWidget {
     return DateTime.now().year;
   }
 
+  // Function to calculate paid members count
+  Future<int> calculatePaidMembersCount() async {
+    final currentMonth = getCurrentMonth();
+    final currentYear = getCurrentYear();
+    final snapshot = await FirebaseFirestore.instance.collection('members').get();
+
+    final paidMembers = snapshot.docs.where((doc) {
+      var data = doc.data() as Map<String, dynamic>;
+      Timestamp? timestamp = data['timestamp'] as Timestamp?;
+
+      if (timestamp != null) {
+        DateTime date = timestamp.toDate();
+        return date.month >= currentMonth && date.year >= currentYear;
+      }
+      return false;
+    }).toList();
+
+    return paidMembers.length;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +72,30 @@ class PaidMembers extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
+                // Total Paid Members Count
+                FutureBuilder<int>(
+                  future: calculatePaidMembersCount(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return const Text(
+                        'Error fetching paid members count.',
+                        style: TextStyle(color: Colors.red),
+                      );
+                    } else {
+                      return Text(
+                        'Total Paid Members: ${snapshot.data}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 20), // Space between count and list
                 // Members List
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
@@ -74,7 +118,7 @@ class PaidMembers extends StatelessWidget {
 
                         if (timestamp != null) {
                           DateTime date = timestamp.toDate();
-                          return date.month == currentMonth && date.year == currentYear;
+                          return date.month >= currentMonth && date.year >= currentYear;
                         }
                         return false;
                       }).toList();
@@ -117,7 +161,7 @@ class MemberCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1), // Slight transparency
+        color: Colors.black.withOpacity(0.6), // Slight transparency
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -125,18 +169,18 @@ class MemberCard extends StatelessWidget {
         children: [
           // Name field
           Text(
-            "Name: $name",
+            "Name  :  $name",
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 5),
           // NIC field
           Text(
-            "NIC: $nic",
+            "NIC  :  $nic",
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),

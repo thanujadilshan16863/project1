@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent, // Make the app bar transparent
         elevation: 0,
-        title: const Text('Administrator', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text('Administrator', style: TextStyle(color: Colors.white60, fontWeight: FontWeight.bold)),
         centerTitle: false,
         leading: const Padding(
           padding: EdgeInsets.all(8.0),
@@ -163,7 +163,7 @@ class CustomButton extends StatelessWidget {
           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold), // Text color updated to white
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white12, // Button color updated to purple
+          backgroundColor: Colors.white.withOpacity(0.2), // Button color updated to purple
           padding: const EdgeInsets.symmetric(vertical: 20), // Increased padding
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15), // Rounded buttons

@@ -36,6 +36,12 @@ class _AllMembersState extends State<AllMembers> {
     });
   }
 
+  // Function to calculate total number of all members
+  Future<int> calculateTotalMembersCount() async {
+    final snapshot = await FirebaseFirestore.instance.collection('members').get();
+    return snapshot.docs.length;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,6 +121,30 @@ class _AllMembersState extends State<AllMembers> {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  // Total All Members Count
+                  FutureBuilder<int>(
+                    future: calculateTotalMembersCount(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return const Text(
+                          'Error fetching total members count.',
+                          style: TextStyle(color: Colors.red),
+                        );
+                      } else {
+                        return Text(
+                          'Total All Members: ${snapshot.data}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 20),
                   // Members List
                   Container(
                     height: MediaQuery.of(context).size.height * 0.6, // Limits height to fit within the screen
@@ -162,7 +192,7 @@ class MemberDetailsCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       margin: const EdgeInsets.only(bottom: 10), // Add margin between cards
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2), // Slight transparency
+        color: Colors.black.withOpacity(0.5), // Slight transparency
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(

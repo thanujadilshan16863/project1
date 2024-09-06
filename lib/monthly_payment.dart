@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart'; // To format the month from timestamp
+import 'package:http/http.dart' as http; // Import http package
 
 class MonthlyPaymentScreen extends StatefulWidget {
   const MonthlyPaymentScreen({super.key});
@@ -79,7 +80,7 @@ class _MonthlyPaymentScreenState extends State<MonthlyPaymentScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      'Name: ${memberName ?? 'Not Found'}    Month: ${paymentMonth ?? 'Not Found'}',
+                      'Name : ${memberName ?? 'Not Found'}     Paid Month : ${paymentMonth ?? 'Not Found'}',
                       style: const TextStyle(color: Colors.white70),
                     ),
                   ),
@@ -141,6 +142,18 @@ class _MonthlyPaymentScreenState extends State<MonthlyPaymentScreen> {
                   ),
                 ],
               ),
+            ),
+          ),
+          // Round Purple Button with Bell Icon
+          Positioned(
+            bottom: 16,
+            left: 16,
+            child: FloatingActionButton(
+              backgroundColor: Colors.purple,
+              onPressed: () {
+                _showConfirmationDialog(context); // Show confirmation dialog
+              },
+              child: const Icon(Icons.notifications, color: Colors.white),
             ),
           ),
         ],
@@ -260,22 +273,122 @@ class _MonthlyPaymentScreenState extends State<MonthlyPaymentScreen> {
     }
   }
 
-  int _monthFromString(String month) {
-    const monthMap = {
-      'January': 1,
-      'February': 2,
-      'March': 3,
-      'April': 4,
-      'May': 5,
-      'June': 6,
-      'July': 7,
-      'August': 8,
-      'September': 9,
-      'October': 10,
-      'November': 11,
-      'December': 12,
-    };
+  Future<void> _sendPaymentReminder(BuildContext context) async {
+    String enteredNIC = nicController.text.trim();
 
-    return monthMap[month] ?? DateTime.now().month;
+    if (enteredNIC.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter NIC')),
+      );
+      return;
+    }
+
+    try {
+      // Fetch data from Firestore to get contact number
+      DocumentSnapshot memberSnapshot = await FirebaseFirestore.instance
+          .collection('members')
+          .doc(enteredNIC)
+          .get();
+
+      if (memberSnapshot.exists) {
+        var memberData = memberSnapshot.data() as Map<String, dynamic>;
+        String contactNumber = memberData['contactNumber'];
+
+        if (contactNumber.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Contact number not found for this NIC.')),
+          );
+          return;
+        }
+
+        // Encode the message text for URL
+        String messageText = Uri.encodeComponent(
+            'Reminder: Your payment for $paymentMonth is due. Please make the payment at your earliest convenience.'
+        );
+
+        // Send payment reminder using TextIt.biz API
+        final response = await http.get(
+          Uri.parse(
+              'https://www.textit.biz/sendmsg?id=94767888824&pw=1245&to=$contactNumber&text=$messageText'
+          ),
+        );
+
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Reminder sent successfully!')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to send reminder. Please try again.')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Member with this NIC does not exist.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error sending reminder: $e')),
+      );
+    }
+  }
+
+  void _showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Send Payment Reminder'),
+          content: const Text('Are you sure you want to send a payment reminder?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                _sendPaymentReminder(context); // Call the function to send the reminder
+              },
+              child: const Text('Send'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  int _monthFromString(String month) {
+    switch (month) {
+      case 'January':
+        return 1;
+      case 'February':
+        return 2;
+      case 'March':
+        return 3;
+      case 'April':
+        return 4;
+      case 'May':
+        return 5;
+      case 'June':
+        return 6;
+      case 'July':
+        return 7;
+      case 'August':
+        return 8;
+      case 'September':
+        return 9;
+      case 'October':
+        return 10;
+      case 'November':
+        return 11;
+      case 'December':
+        return 12;
+      default:
+        return 1;
+    }
   }
 }

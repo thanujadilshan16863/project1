@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class UnpaidMembers extends StatelessWidget {
   const UnpaidMembers({super.key});
@@ -11,6 +13,84 @@ class UnpaidMembers extends StatelessWidget {
 
   int getCurrentYear() {
     return DateTime.now().year;
+  }
+
+  // Function to send SMS using Textit.biz API
+  Future<void> sendSms(String phoneNumber, String message) async {
+    final String apiKey = '94712958370';  // Replace with your Textit.biz API key
+    final String senderId = '5199';    // Replace with your sender ID
+
+    // Textit.biz API endpoint with query parameters for GET request
+    final url = Uri.parse(
+      'https://www.textit.biz/sendmsg?id=$apiKey&pw=$senderId&to=$phoneNumber&text=${Uri.encodeComponent(message)}',
+    );
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      var responseData = json.decode(response.body);
+      if (responseData['status'] == 'OK') {
+        print('Message sent successfully to $phoneNumber');
+      } else {
+        print('Failed to send message to $phoneNumber: ${responseData['error']}');
+      }
+    } else {
+      print('Failed to send SMS. Status code: ${response.statusCode}');
+    }
+  }
+
+  // Function to send reminders to all unpaid members
+  void sendReminderToUnpaidMembers(BuildContext context) async {
+    final currentMonth = getCurrentMonth();
+    final currentYear = getCurrentYear();
+
+    final snapshot = await FirebaseFirestore.instance.collection('members').get();
+
+    final unpaidMembers = snapshot.docs.where((doc) {
+      var data = doc.data() as Map<String, dynamic>;
+      Timestamp? timestamp = data['timestamp'] as Timestamp?;
+
+      if (timestamp != null) {
+        DateTime date = timestamp.toDate();
+        return date.month < currentMonth || (date.month == currentMonth && date.year < currentYear);
+      }
+      return false;
+    }).toList();
+
+    if (unpaidMembers.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('All members have paid this month.')));
+      return;
+    }
+
+    for (var member in unpaidMembers) {
+      var data = member.data() as Map<String, dynamic>;
+      String? phoneNumber = data['contactNumber'];  // Replace 'phoneNumber' with your actual field name
+      if (phoneNumber != null && phoneNumber.isNotEmpty) {
+        await sendSms(phoneNumber, 'Reminder: Please pay your membership dues for this month.');
+      }
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Reminders sent to unpaid members.')));
+  }
+
+  // Function to calculate unpaid members count
+  Future<int> calculateUnpaidMembersCount() async {
+    final currentMonth = getCurrentMonth();
+    final currentYear = getCurrentYear();
+    final snapshot = await FirebaseFirestore.instance.collection('members').get();
+
+    final unpaidMembers = snapshot.docs.where((doc) {
+      var data = doc.data() as Map<String, dynamic>;
+      Timestamp? timestamp = data['timestamp'] as Timestamp?;
+
+      if (timestamp != null) {
+        DateTime date = timestamp.toDate();
+        return date.month < currentMonth || (date.month == currentMonth && date.year < currentYear);
+      }
+      return false;
+    }).toList();
+
+    return unpaidMembers.length;
   }
 
   @override
@@ -51,6 +131,51 @@ class UnpaidMembers extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
+                // Purple Button
+                ElevatedButton(
+                  onPressed: () {
+                    sendReminderToUnpaidMembers(context); // Send reminders when button is clicked
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple, // Button color
+                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: const Text(
+                    "Send Reminder",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20), // Space between button and unpaid members count
+                // Unpaid Members Count
+                FutureBuilder<int>(
+                  future: calculateUnpaidMembersCount(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return const Text(
+                        'Error fetching unpaid members count.',
+                        style: TextStyle(color: Colors.red),
+                      );
+                    } else {
+                      return Text(
+                        'Total Unpaid Members: ${snapshot.data}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 20), // Space between count and list
                 // Members List
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
@@ -116,7 +241,7 @@ class MemberCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1), // Slight transparency
+        color: Colors.black.withOpacity(0.6), // Slight transparency
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -124,18 +249,18 @@ class MemberCard extends StatelessWidget {
         children: [
           // Name field
           Text(
-            "Name: $name",
+            "Name  :  $name",
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 5),
           // NIC field
           Text(
-            "NIC: $nic",
+            "NIC  :  $nic",
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
