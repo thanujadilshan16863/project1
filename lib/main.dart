@@ -7,8 +7,8 @@ Future<void> main() async {
    try {
 
     await Firebase.initializeApp(
-      options: const FirebaseOptions(apiKey: "AIzaSyDKiOUf85aSEg6aGz2gVYTV5T-QFIPFdFY",
-          appId: '426315941612:android:7119da753044d3f30b07c9', messagingSenderId: '426315941612', projectId: 'project1-7b906')
+      options: const FirebaseOptions(apiKey: "FY",
+          appId: 'c9', messagingSenderId: '612', projectId: '6')
     );  // Make sure Firebase is initialized before running the app
 
   } catch (e) {
